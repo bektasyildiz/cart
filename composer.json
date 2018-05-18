@@ -3,7 +3,10 @@
   "description": "A cart",
   "license": "MIT",
   "keywords": [
-    "cart"
+    "laravel",
+    "cart",
+    "cart library",
+    "eloquent cart"
   ],
   "type": "library",
   "authors": [
