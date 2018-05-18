@@ -16,7 +16,7 @@ Package description: CHANGE ME
 
 Install via composer
 ```bash
-composer require bektas/cart
+composer require bektas/cart dev-master
 ```
 
 ### Register Service Provider
@@ -44,7 +44,39 @@ php artisan vendor:publish --provider="Bektas\Cart\ServiceProvider" --tag="confi
 
 ## Usage
 
-CHANGE ME
+Cart::add([
+  99,
+  "Başlık",
+  10,
+  1,
+  ['renk' => 'mavi']
+]);
+
+Cart::content();
+
+Cart::activeContent();
+
+Cart::getRow($rowID);
+
+Cart::updateQty($rowID, $qty);
+
+Cart::count();
+
+Cart::activeCount();
+
+Cart::changeRowStatus($rowID, 0); // 0 => Pasif, 1 => Aktif
+
+Cart::remove($rowID);
+
+Cart::total();
+
+Cart::destroy();
+
+Cart::activeDestroy();
+
+Cart::checkRowId($rowID);
+
+Cart::getOptVal($options, 'renk');
 
 ## Security
 
