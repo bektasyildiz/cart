@@ -43,7 +43,7 @@ php artisan vendor:publish --provider="Bektas\Cart\ServiceProvider" --tag="confi
 ```
 
 ## Usage
-
+```php
 Cart::add([
   99,
   "Başlık",
@@ -77,6 +77,7 @@ Cart::activeDestroy();
 Cart::checkRowId($rowID);
 
 Cart::getOptVal($options, 'renk');
+```
 
 ## Security
 
