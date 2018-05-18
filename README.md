@@ -86,8 +86,8 @@ instead of using the issue tracker.
 
 ## Credits
 
-- [Bektaş](https://github.com/bektas/cart)
-- [All contributors](https://github.com/bektas/cart/graphs/contributors)
+- [Bektaş](https://github.com/bektasyildiz/cart)
+- [All contributors](https://github.com/bektasyildiz/cart/graphs/contributors)
 
 This package is bootstrapped with the help of
 [melihovv/laravel-package-generator](https://github.com/melihovv/laravel-package-generator).
