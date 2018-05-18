@@ -60,6 +60,8 @@ Cart::getRow($rowID);
 
 Cart::updateQty($rowID, $qty);
 
+Cart::update($rowID, ['name' => 'change', 'options' => ['renk' => 'Kırmızı']]);
+
 Cart::count();
 
 Cart::activeCount();
