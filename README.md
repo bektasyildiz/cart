@@ -10,7 +10,7 @@
 [![Packagist](https://poser.pugx.org/bektas/cart/d/total.svg)](https://packagist.org/packages/bektas/cart)
 [![Packagist](https://img.shields.io/packagist/l/bektas/cart.svg)](https://packagist.org/packages/bektas/cart)
 
-Package description: CHANGE ME
+Package description: Laravel 5 cart.
 
 ## Installation
 
