@@ -23,6 +23,7 @@ class CreateCartTable extends Migration
             return;
         Schema::create('cart', function (Blueprint $table) {
             $table->integer('id');
+            $table->string('groupName')->index();
             $table->string('identifier')->index();
             $table->string('rowId')->index();
             $table->char('rowStatus', 1)->index();

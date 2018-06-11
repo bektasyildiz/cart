@@ -7,7 +7,18 @@ use Illuminate\Support\Facades\Auth;
 class Cart
 {
 
-    private static $identifier = null;
+    protected static $identifier = null;
+    public static $groupName = 'default';
+
+    /**
+     * Saklama grubu için isim belirler.
+     * @param type $groupName
+     */
+    public function setGroupName($groupName)
+    {
+        static::$groupName = $groupName;
+        return $this;
+    }
 
     /**
      * Sepeti eğer üye girişi varsa üyeye kaydeder, üye girişi yoksa oturuma kaydeder. (Sepet farklı bir cihazdan giriş yapılığında tekrar gelir.)
@@ -18,9 +29,9 @@ class Cart
     {
         if ($identifier == '' || $identifier == null) {
             if (Auth::check()) {
-                return self::$identifier = Auth::user()->email;
+                return static::$identifier = Auth::user()->email;
             } else {
-                return self::$identifier = session()->getId();
+                return static::$identifier = session()->getId();
             }
         }
     }
@@ -32,7 +43,7 @@ class Cart
     public function setIdentifier($identifier)
     {
         if ($identifier != '') {
-            self::$identifier = $identifier;
+            static::$identifier = $identifier;
         }
     }
 
@@ -51,10 +62,12 @@ class Cart
         if ($this->checkRowId($rowId)) {
             $row = $this->getRow($rowId);
             $this->updateQty($rowId, $row->qty + $qty);
+            return $this->getRow($rowId);
         } else {
             $add = new CartEloquent();
             $add->id = $id;
             $add->rowId = $rowId;
+            $add->groupName = static::$groupName;
             $add->identifier = $this->getIdentifier();
             $add->name = $name;
             $add->price = $price;
@@ -73,8 +86,8 @@ class Cart
      */
     public function content()
     {
-        if (CartEloquent::where('identifier', $this->getIdentifier())->count() > 0) {
-            $data = CartEloquent::where('identifier', $this->getIdentifier())->get();
+        if (CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->count() > 0) {
+            $data = CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->get();
             $newData = [];
             foreach ($data as $val) {
                 $item = $val;
@@ -94,8 +107,8 @@ class Cart
      */
     public function activeContent()
     {
-        if (CartEloquent::where('identifier', $this->getIdentifier())->count() > 0) {
-            $data = CartEloquent::where('identifier', $this->getIdentifier())->where('rowStatus', '1')->get();
+        if (CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->count() > 0) {
+            $data = CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowStatus', '1')->get();
             $newData = [];
             foreach ($data as $val) {
                 $item = $val;
@@ -116,7 +129,7 @@ class Cart
      */
     public function getRow($rowId)
     {
-        $data = CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->first();
+        $data = CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->first();
         $data->options = json_decode($data->options);
         $data->subTotal = $data->qty * $data->price;
         return $data;
@@ -130,9 +143,9 @@ class Cart
     public function updateQty($rowId, $qty)
     {
         if ($qty <= 0) {
-            $result = CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->delete();
+            $result = CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->delete();
         } else {
-            $result = CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->update(['qty' => $qty]);
+            $result = CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->update(['qty' => $qty]);
         }
         return $result;
     }
@@ -146,12 +159,12 @@ class Cart
                 $update['options'] = json_encode($val);
             }
         }
-        return CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->update($update);
+        return CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->update($update);
     }
 
     public function count()
     {
-        $total = CartEloquent::select(DB::raw('SUM(qty) AS total'))->where('identifier', $this->getIdentifier())->first()->total;
+        $total = CartEloquent::select(DB::raw('SUM(qty) AS total'))->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->first()->total;
         if ($total == '')
             return 0;
         else
@@ -160,7 +173,7 @@ class Cart
 
     public function activeCount()
     {
-        $total = CartEloquent::select(DB::raw('SUM(qty) AS total'))->where('identifier', $this->getIdentifier())->where('rowStatus', '1')->first()->total;
+        $total = CartEloquent::select(DB::raw('SUM(qty) AS total'))->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowStatus', '1')->first()->total;
         if ($total == '') {
             return 0;
         } else {
@@ -170,7 +183,7 @@ class Cart
 
     public function changeRowStatus($rowId, $status = '0')
     {
-        return CartEloquent::where('identifier', $this->getIdentifier())->where('rowId', $rowId)->update(['rowStatus' => $status]);
+        return CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowId', $rowId)->update(['rowStatus' => $status]);
     }
 
     /**
@@ -180,7 +193,7 @@ class Cart
      */
     public function remove($rowId)
     {
-        return CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->delete();
+        return CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->delete();
     }
 
     /**
@@ -189,7 +202,7 @@ class Cart
      */
     public function total()
     {
-        $data = CartEloquent::where('identifier', $this->getIdentifier())->where('rowStatus', '1')->get(['qty', 'price']);
+        $data = CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowStatus', '1')->get(['qty', 'price']);
         $total = 0;
         foreach ($data as $val) {
             $total += $val->qty * $val->price;
@@ -202,7 +215,7 @@ class Cart
      */
     public function destroy()
     {
-        CartEloquent::where('identifier', $this->getIdentifier())->delete();
+        CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->delete();
     }
 
     /**
@@ -210,7 +223,7 @@ class Cart
      */
     public function activeDestroy()
     {
-        CartEloquent::where('identifier', $this->getIdentifier())->where('rowStatus', '1')->delete();
+        CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowStatus', '1')->delete();
     }
 
     /**
@@ -220,7 +233,7 @@ class Cart
      */
     public function checkRowId($rowId)
     {
-        if (CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->count() > 0) {
+        if (CartEloquent::where('rowId', $rowId)->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->count() > 0) {
             return true;
         } else {
             return false;
