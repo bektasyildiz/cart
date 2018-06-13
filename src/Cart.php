@@ -3,6 +3,7 @@
 namespace Bektas\Cart;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Cart
 {
@@ -62,7 +63,7 @@ class Cart
         if ($this->checkRowId($rowId)) {
             $row = $this->getRow($rowId);
             $this->updateQty($rowId, $row->qty + $qty);
-            return $this->getRow($rowId);
+            return $row;
         } else {
             $add = new CartEloquent();
             $add->id = $id;
@@ -78,6 +79,7 @@ class Cart
                 return $add;
             }
         }
+        return false;
     }
 
     /**
@@ -113,7 +115,7 @@ class Cart
             foreach ($data as $val) {
                 $item = $val;
                 $item->options = json_decode($val->options);
-                $item->subTotal = $val->qty * $val->price;
+                $item->subTotal = number_format($val->qty * $val->price, 2, '.', '');
                 $newData[] = $item;
             }
             return $newData;
@@ -207,7 +209,7 @@ class Cart
         foreach ($data as $val) {
             $total += $val->qty * $val->price;
         }
-        return $total;
+        return number_format($total, 2, '.', '');
     }
 
     /**
