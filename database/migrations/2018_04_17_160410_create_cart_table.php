@@ -32,7 +32,6 @@ class CreateCartTable extends Migration
             $table->integer('qty')->unsigned();
             $table->text('options')->nullable();
             $table->timestamps();
-            $table->index(['identifier', 'rowId']);
             $table->charset = 'utf8';
             $table->collation = 'utf8_general_ci';
         });
