@@ -14,9 +14,9 @@ if (!function_exists('cartTotal')) {
     /*
      * sepet fiyat toplamını verir.
      */
-    function cartTotal()
+    function cartTotal($groupName = 'default')
     {
-        return \Bektas\Cart\Facades\Cart::total();
+        return \Bektas\Cart\Facades\Cart::setGroupName($groupName)->total();
     }
 }
 
@@ -24,8 +24,8 @@ if (!function_exists('cartCount')) {
     /*
      * sepet ürün adedini verir.
      */
-    function cartCount()
+    function cartCount($groupName = 'default')
     {
-        return \Bektas\Cart\Facades\Cart::activeCount();
+        return \Bektas\Cart\Facades\Cart::setGroupName($groupName)->activeCount();
     }
 }
