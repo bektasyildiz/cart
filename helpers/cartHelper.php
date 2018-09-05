@@ -29,3 +29,13 @@ if (!function_exists('cartCount')) {
         return \Bektas\Cart\Facades\Cart::setGroupName($groupName)->activeCount();
     }
 }
+
+if (!function_exists('cartContent')) {
+    /*
+     * sepet ürün adedini verir.
+     */
+    function cartContent($groupName = 'default')
+    {
+        return \Bektas\Cart\Facades\Cart::setGroupName($groupName)->activeContent();
+    }
+}
