@@ -166,7 +166,7 @@ class Cart
 
     public function count()
     {
-        $total = CartEloquent::select(DB::raw('SUM(qty) AS total'))->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->first()->total;
+        $total = CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->count();
         if ($total == '')
             return 0;
         else
@@ -175,7 +175,7 @@ class Cart
 
     public function activeCount()
     {
-        $total = CartEloquent::select(DB::raw('SUM(qty) AS total'))->where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowStatus', '1')->first()->total;
+        $total = CartEloquent::where('identifier', $this->getIdentifier())->where('groupName', static::$groupName)->where('rowStatus', '1')->count();
         if ($total == '') {
             return 0;
         } else {
